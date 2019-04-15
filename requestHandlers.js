@@ -1,13 +1,34 @@
+let exec = require('child_process').exec;
 
-
-function start() {
+function start(response) {
     console.log('request handler start was calleld')
-    return 'STARTING';
+    const body = /*html*/ `
+    <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html" charset=UTF-8 />
+    </head>
+    <body>
+    <form action="/upload" method ="post">
+    <textarea name="text" rows="20" cols="60"></textarea>
+    <input type="submit" vlaue="Submit text" />
+    </form>
+    </body>
+    </html>
+
+    `;
+
+    exec("ls -lah", function (error, stdout, stderr) { 
+        response.writeHead(200, {'Content-Type': 'text/plain'});
+        response.write(stdout);
+        response.end();
+    });
 }
 
-function upload() {
+function upload(response) {
     console.log('request handler uplload was called');
-    return 'UPLOADDDD';
+    response.writeHead(200, {'Content-Type': 'text/plain'});
+    response.write('hello upload :)(:');
+    response.end();
 }
 
 
