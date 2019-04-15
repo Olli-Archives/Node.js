@@ -3,9 +3,9 @@ function route(handle, pathname){
     console.log('handle', handle);
     console.log('pathname', pathname);
     if(typeof handle[pathname] === 'function'){
-        handle[pathname]();
+        return handle[pathname]();
     }else{
-        console.log('no reqeust handler found for', pathname);
+        console.log('404 no reqeust handler found for', pathname);
     }
 }
 
