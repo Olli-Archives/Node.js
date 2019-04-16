@@ -1,8 +1,10 @@
 let querystring = require(`querystring`),
-    fs = require('fs');
+    fs = require('fs'),
+    formidable = require('formidable');
 
 
-function start(response, postData) {
+
+function start(response) {
     console.log('request handler start was calleld')
     const body = /*html*/ `
     <html>
@@ -10,9 +12,9 @@ function start(response, postData) {
     <meta http-equiv="Content-Type" content="text/html" charset=UTF-8 />
     </head>
     <body> 
-    <form action="/upload" method ="post">
-    <textarea name="text" rows="20" cols="60"></textarea>
-    <input type="submit" vlaue="Submit text" />
+    <form action="/upload" encytype ="multipart/form-data" method="post">
+    <input type="file" name="upload" multiple="multiple" />
+    <input type="submit" value="Upload file" />
     </form>
     </body>
     </html>
@@ -26,16 +28,29 @@ function start(response, postData) {
 
 }
 
-function upload(response, postData) {
+function upload(response, prequest) {
     console.log('request handler uplload was called');
-    response.writeHead(200, { 'Content-Type': 'text/plain' });
-    response.write(querystring.parse(postData).text);
-    response.end();
+
+    let form = new formidable.IncomingForm();
+    console.log('aboutto parse');
+    form.parse(request, (error, fields, files) => {
+        console.log('parsin done');
+        fs.rename(files.upload.path, '/tmp/test.png', (error) => {
+            if (error) {
+                fs.unlink('/tmp/test.png');
+                fs.rename(files.upload.path, './tmp/test.png');
+            }
+        });
+        response.writeHead(200, { 'Content-Type': 'text/html' });
+        response.write('received image:<br/>');
+        response.write("<img src='/show' />");
+        response.end();
+    });
 }
 
-function show(response){
+function show(response) {
     console.log('request handler show was called');
-    response.writeHead(200, {'Content-Type': 'img/png'});
+    response.writeHead(200, { 'Content-Type': 'img/png' });
     fs.createReadStream('./tmp/test.png').pipe(response);
 
 }

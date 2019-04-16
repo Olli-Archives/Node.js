@@ -1,12 +1,11 @@
-function route(handle, pathname, response, postData){
-    console.log('routing you to', pathname);
-    console.log('handle', handle);
-    console.log('pathname', pathname);
+function route(handle, pathname, response, request){
+    console.log('routing request for', pathname);
+   
     if(typeof handle[pathname] === 'function'){
-        handle[pathname](response, postData);
+        handle[pathname](response, request);
     }else{
         console.log('404 no reqeust handler found for', pathname);
-        response.writeHead(404, {'Content-Type': 'text/plain'});
+        response.writeHead(404, {'Content-Type': 'text/html'});
         response.write('404 Not Found');
         response.end();
     }
